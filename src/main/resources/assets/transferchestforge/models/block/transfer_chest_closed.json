@@ -1,0 +1,23 @@
+{
+    "parent": "block/orientable",
+    "textures": {
+        "particle": "#side",
+        "top": "transferchestforge:block/transfer_chest_top",
+        "side": "transferchestforge:block/transfer_chest_side",
+        "bottom": "transferchestforge:block/transfer_chest_bottom"
+    },
+    "elements": [
+        {
+            "from": [1, 0, 1],
+            "to": [15, 14, 15],
+            "faces": {
+                "down": {"uv": [0, 0, 16, 16], "texture": "#bottom"},
+                "up": {"uv": [0, 0, 16, 16], "texture": "#top"},
+                "north": {"uv": [0, 0, 16, 16], "texture": "#side"},
+                "south": {"uv": [0, 0, 16, 16], "texture": "#side"},
+                "west": {"uv": [0, 0, 16, 16], "texture": "#side"},
+                "east": {"uv": [0, 0, 16, 16], "texture": "#side"}
+            }
+        }
+    ]
+}

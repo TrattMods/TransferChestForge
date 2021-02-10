@@ -1,0 +1,28 @@
+modLoader = "javafml" #mandatory
+
+loaderVersion = "[35,)" #mandatory This is typically bumped every Minecraft version by Forge. See our download page for lists of versions.
+
+license = "All rights reserved"
+#issueTrackerURL="https://change.me.to.your.issue.tracker.example.invalid/" #optional
+[[mods]] #mandatory
+
+modId = "transferchestforge" #mandatory
+
+version = "${file.jarVersion}" #mandatory
+
+displayName = "Transfer Chest" #mandatory
+
+
+#displayURL="https://change.me.to.your.mods.homepage.example.invalid/" #optional
+
+logoFile = "transferchestforge.png" #optional
+
+credits = "Thanks for this mod goes to t_r_a_t" #optional
+
+authors = "t_r_a_t" #optional
+
+description = '''
+Introduces a chest that can be used to transfer items among players in any dimension at any time.
+Be sure to check out the wiki page for more information!
+'''
+
