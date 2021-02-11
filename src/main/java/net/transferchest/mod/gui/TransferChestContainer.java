@@ -8,17 +8,20 @@ import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.SlotItemHandler;
-import net.transferchest.mod.core.TransferChestHandler;
 import net.transferchest.mod.core.TransferChestInventory;
+import net.transferchest.mod.entity.TransferChestTileEntity;
 import net.transferchest.mod.initializer.TCContainers;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 public class TransferChestContainer extends Container
 {
-    private TransferChestInventory content;
+    private IItemHandler stackHandler;
     private BlockPos pos;
+    TransferChestTileEntity entity;
+    private String[] watchers;
     private static final Logger LOGGER = LogManager.getLogger();
     private PlayerEntity owner;
     private static final int HOTBAR_SLOT_COUNT = 9;
@@ -31,26 +34,27 @@ public class TransferChestContainer extends Container
     private static final int TE_INVENTORY_FIRST_SLOT_INDEX = VANILLA_FIRST_SLOT_INDEX + VANILLA_SLOT_COUNT;
     private static final int TE_INVENTORY_SLOT_COUNT = TransferChestInventory.INVENTORY_SIZE;
     
-    
-    
-    public TransferChestContainer(int windowId, World world, BlockPos pos, PlayerInventory playerInventory, PlayerEntity player)
+    public TransferChestContainer(int windowId, World world, BlockPos pos, PlayerInventory playerInventory, TransferChestTileEntity entity)
     {
         super(TCContainers.TRANSFER_CHEST_CONTAINER.get(), windowId);
+        this.entity = entity;
         this.owner = playerInventory.player;
         this.pos = pos;
-        this.content = TransferChestHandler.getTransferChestInventory();
+        this.stackHandler = entity.inventory();
         for(int i = 0; i < TransferChestInventory.INVENTORY_SIZE; i++)
         {
             if(i < TransferChestInventory.INVENTORY_SIZE / 2)
             {
-                addSlot(new SlotItemHandler(content.getContent(), i, i * 18 + 8, 29));
+                addSlot(new SlotItemHandler(stackHandler, i, i * 18 + 8, 29));
             }
             else
             {
-                addSlot(new SlotItemHandler(content.getContent(), i, (i - (TransferChestInventory.INVENTORY_SIZE / 2)) * 18 + 8, 47));
+                addSlot(new SlotItemHandler(stackHandler, i, (i - (TransferChestInventory.INVENTORY_SIZE / 2)) * 18 + 8, 47));
             }
         }
         bindPlayerInventory(playerInventory, 84);
+        //inventorySlots.get(0).putStack(new ItemStack(Items.CHAIN, 12));
+        this.entity.onOpen(this);
     }
     
     public String getOwnerName()
@@ -58,13 +62,22 @@ public class TransferChestContainer extends Container
         return owner.getName().getString();
     }
     
+    public String[] getWatchers()
+    {
+        return watchers;
+    }
+    
+    public void updateWatchers(String[] names)
+    {
+        watchers = names;
+    }
+    
     @Override
     public boolean canInteractWith(PlayerEntity playerEntity)
     {
-        return playerEntity.getDistanceSq(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5) < 8.0 * 8.0;
+        return playerEntity.getDistanceSq(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5) < 8.0 * 8.0 && !entity.isRemoved();
     }
     
-
     @Override
     public ItemStack transferStackInSlot(PlayerEntity playerEntity, int sourceSlotIndex)
     {
@@ -72,7 +85,6 @@ public class TransferChestContainer extends Container
         if(sourceSlot == null || !sourceSlot.getHasStack()) return ItemStack.EMPTY;  //EMPTY_ITEM
         ItemStack sourceStack = sourceSlot.getStack();
         ItemStack copyOfSourceStack = sourceStack.copy();
-        
         if(sourceSlotIndex >= VANILLA_FIRST_SLOT_INDEX && sourceSlotIndex < VANILLA_FIRST_SLOT_INDEX + VANILLA_SLOT_COUNT)
         {
             if(!mergeItemStack(sourceStack, TE_INVENTORY_FIRST_SLOT_INDEX, TE_INVENTORY_FIRST_SLOT_INDEX + TE_INVENTORY_SLOT_COUNT, false))
@@ -110,7 +122,8 @@ public class TransferChestContainer extends Container
     @Override
     public void onContainerClosed(PlayerEntity playerIn)
     {
-        TransferChestHandler.closeGUI(playerIn.world, this);
+        //TransferChestHandler.closeGUI(playerIn.world, this);
+        entity.onClose(this);
         super.onContainerClosed(playerIn);
     }
     
@@ -120,9 +133,7 @@ public class TransferChestContainer extends Container
         {
             for(int x = 0; x < 9; x++)
             {
-                addSlot(new Slot(playerInventory,
-                      x + y * 9 + 9,
-                      8 + x * 18, yOffset + y * 18));
+                addSlot(new Slot(playerInventory, x + y * 9 + 9, 8 + x * 18, yOffset + y * 18));
             }
         }
         

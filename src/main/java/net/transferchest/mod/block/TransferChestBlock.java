@@ -24,7 +24,9 @@ import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.network.NetworkHooks;
 import net.transferchest.mod.abstraction.AHorizontalFacingInventoryBlock;
+import net.transferchest.mod.core.TransferChestHandler;
 import net.transferchest.mod.entity.TransferChestTileEntity;
+import net.transferchest.mod.gui.TransferChestContainer;
 import net.transferchest.mod.loader.TCLoader;
 
 import javax.annotation.Nullable;
@@ -60,10 +62,6 @@ public class TransferChestBlock extends AHorizontalFacingInventoryBlock
         return Block.makeCuboidShape(1F, 0F, 1F, 15F, 14F, 15F);
     }
     
-    @Nullable @Override public TileEntity createTileEntity(BlockState state, IBlockReader world)
-    {
-        return new TransferChestTileEntity();
-    }
     @Override
     public boolean hasTileEntity(BlockState state)
     {
@@ -83,25 +81,24 @@ public class TransferChestBlock extends AHorizontalFacingInventoryBlock
         worldIn.addParticle(ParticleTypes.DRAGON_BREATH, d, e, f, g, h, l);
     }
     
-    // Copied from ChestBlock
     @Override
     public ActionResultType onBlockActivated(BlockState state, World worldIn, BlockPos pos, PlayerEntity player, Hand hand, BlockRayTraceResult rayTraceResult)
     {
-        if (worldIn.isRemote) return ActionResultType.SUCCESS;
-        
-        INamedContainerProvider namedContainerProvider = this.getContainer(state, worldIn, pos);
-        if (namedContainerProvider != null)
-        {
-            if (!(player instanceof ServerPlayerEntity)) return ActionResultType.FAIL;
-            ServerPlayerEntity serverPlayerEntity = (ServerPlayerEntity)player;
-            NetworkHooks.openGui(serverPlayerEntity, namedContainerProvider, (packetBuffer)->
-                  packetBuffer.writeBlockPos(pos));
-        }
+        if (worldIn.isRemote)
+            return ActionResultType.SUCCESS;
+    
+        TileEntity tileEntity = worldIn.getTileEntity(pos);
+        if (!(tileEntity instanceof INamedContainerProvider))
+            return ActionResultType.FAIL;
+    
+        NetworkHooks.openGui((ServerPlayerEntity) player, (INamedContainerProvider) tileEntity,(packetBuffer)-> packetBuffer.writeBlockPos(pos));
+    
+        TransferChestHandler.openGUI(worldIn, (TransferChestContainer) player.openContainer);
         return ActionResultType.SUCCESS;
     }
     
     @Nullable @Override public TileEntity createNewTileEntity(IBlockReader worldIn)
     {
-        return null;
+        return new TransferChestTileEntity();
     }
 }

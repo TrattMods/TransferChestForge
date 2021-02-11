@@ -16,11 +16,11 @@ public class SerializableInventory implements Serializable
     
     public SerializableInventory(TransferChestInventory stacks)
     {
-        int length = stacks.getContent().getSlots();
+        int length = stacks.getSlots();
         inventory = new ItemStackWrapper[length];
         for(int i = 0; i < length; i++)
         {
-            ItemStack stack = stacks.getContent().getStackInSlot(i);
+            ItemStack stack = stacks.getStackInSlot(i);
             inventory[i] = new ItemStackWrapper(Item.getIdFromItem(stack.getItem()), stack.getCount());
         }
     }

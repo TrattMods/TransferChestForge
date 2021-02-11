@@ -15,7 +15,10 @@ import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraftforge.items.IItemHandler;
 import net.transferchest.mod.block.TransferChestBlock;
+import net.transferchest.mod.core.TransferChestHandler;
+import net.transferchest.mod.core.TransferChestInventory;
 import net.transferchest.mod.gui.TransferChestContainer;
 import net.transferchest.mod.initializer.TCBlocks;
 import net.transferchest.mod.initializer.TCEntities;
@@ -26,21 +29,23 @@ import javax.annotation.Nullable;
 public class TransferChestTileEntity extends TileEntity implements ITickableTileEntity, INamedContainerProvider
 {
     private int viewers;
+    private TransferChestInventory inventory;
     
     public TransferChestTileEntity()
     {
         super(TCEntities.TRANSFER_CHEST_TILE_ENTITY.get());
+        inventory = new TransferChestInventory();
     }
     
-    //public boolean canPlayerAccessInventory(PlayerEntity player)
-    //{
-    //    if(this.world.getTileEntity(this.pos) != this) return false;
-    //    final double X_CENTRE_OFFSET = 0.5;
-    //    final double Y_CENTRE_OFFSET = 0.5;
-    //    final double Z_CENTRE_OFFSET = 0.5;
-    //    final double MAXIMUM_DISTANCE_SQ = 8.0 * 8.0;
-    //    return player.getDistanceSq(pos.getX() + X_CENTRE_OFFSET, pos.getY() + Y_CENTRE_OFFSET, pos.getZ() + Z_CENTRE_OFFSET) < MAXIMUM_DISTANCE_SQ;
-    //}
+    public void onClose(TransferChestContainer container)
+    {
+        if(!world.isRemote)
+        {
+            viewers--;
+            if(viewers < 0) viewers = 0;
+            TransferChestHandler.closeGUI(world, container);
+        }
+    }
     
     @Override public ITextComponent getDisplayName()
     {
@@ -51,31 +56,32 @@ public class TransferChestTileEntity extends TileEntity implements ITickableTile
     @Nullable
     public SUpdateTileEntityPacket getUpdatePacket()
     {
-        CompoundNBT nbtTagCompound = new CompoundNBT();
-        write(nbtTagCompound);
-        int tileEntityType = 42;  // arbitrary number; only used for vanilla TileEntities.  You can use it, or not, as you want.
-        return new SUpdateTileEntityPacket(this.pos, tileEntityType, nbtTagCompound);
+        return new SUpdateTileEntityPacket(this.pos, 0, getUpdateTag());
     }
     
     @Override
     public void onDataPacket(NetworkManager net, SUpdateTileEntityPacket pkt)
     {
-        BlockState blockState = world.getBlockState(pos);
-        read(blockState, pkt.getNbtCompound());
+        handleUpdateTag(getBlockState(), pkt.getNbtCompound());
+    }
+    
+    public IItemHandler inventory()
+    {
+        return inventory;
     }
     
     @Override
     public CompoundNBT getUpdateTag()
     {
-        CompoundNBT nbtTagCompound = new CompoundNBT();
-        write(nbtTagCompound);
+        CompoundNBT nbtTagCompound = super.getUpdateTag();
+        nbtTagCompound.put("Items", inventory.serializeNBT());
         return nbtTagCompound;
     }
     
     @Override
     public void handleUpdateTag(BlockState blockState, CompoundNBT tag)
     {
-        this.read(blockState, tag);
+        inventory.deserializeNBT(tag.getCompound("Items"));
     }
     
     
@@ -84,8 +90,20 @@ public class TransferChestTileEntity extends TileEntity implements ITickableTile
         if(!world.isRemote)
         {
             this.world.setBlockState(this.pos, (BlockState) this.world.getBlockState(this.pos).with(TransferChestBlock.OPENED, opened), 0B1011);
-            SoundEvent event = opened ? TCSounds.TRANSFER_CHEST_OPEN_SOUNDEVENT : TCSounds.TRANSFER_CHEST_CLOSE_SOUNDEVENT;
+            SoundEvent event = opened ? TCSounds.TRANSFER_CHEST_OPEN_SOUNDEVENT.get() : TCSounds.TRANSFER_CHEST_CLOSE_SOUNDEVENT.get();
             this.world.playSound(null, pos.getX() + 0.5D, pos.getY(), pos.getZ() + 0.5D, event, SoundCategory.BLOCKS, 0.45F, this.world.rand.nextFloat() * 0.2F + 1F);
+        }
+    }
+    
+    public void onOpen(TransferChestContainer container)
+    {
+        if(!world.isRemote)
+        {
+            viewers++;
+            if(viewers > 0 && !isOpened())
+            {
+                setOpened(true);
+            }
         }
     }
     
@@ -114,6 +132,7 @@ public class TransferChestTileEntity extends TileEntity implements ITickableTile
     @Override
     public Container createMenu(int windowID, PlayerInventory playerInventory, PlayerEntity playerEntity)
     {
-        return new TransferChestContainer(windowID, world, pos, playerInventory, playerEntity);
+        inventory = TransferChestHandler.getTransferChestInventory();
+        return new TransferChestContainer(windowID, world, pos, playerEntity.inventory, this);
     }
 }

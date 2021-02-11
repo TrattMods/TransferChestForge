@@ -10,6 +10,7 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.transferchest.mod.block.TransferChestBlock;
+import net.transferchest.mod.entity.TransferChestTileEntity;
 import net.transferchest.mod.gui.TransferChestContainer;
 import net.transferchest.mod.loader.TCLoader;
 
@@ -22,7 +23,7 @@ public final class TCContainers
           {
               BlockPos pos = data.readBlockPos();
               World world = inv.player.getEntityWorld();
-              return new TransferChestContainer(windowId, world, pos, inv, inv.player);
+              return new TransferChestContainer(windowId, world, pos, inv, (TransferChestTileEntity) world.getTileEntity(pos));
           }));
     
     public static void initialize()

@@ -3,7 +3,7 @@
   <configuration default="false" factoryName="Application" name="runData" singleton="false" type="Application">
     <option name="MAIN_CLASS_NAME" value="net.minecraftforge.userdev.LaunchTesting"/>
     <option name="VM_PARAMETERS" value="-Dforge.logging.console.level=debug -Dforge.logging.markers=SCAN,REGISTRIES,REGISTRYDUMP"/>
-    <option name="PROGRAM_PARAMETERS" value="--mod examplemod --all --output C:\Users\Matteo\Documents\Projects\Mods\TransferChestForge-1.16\src\generated\resources --existing C:\Users\Matteo\Documents\Projects\Mods\TransferChestForge-1.16\src\main\resources"/>
+    <option name="PROGRAM_PARAMETERS" value="--mod transferchestforge --all --output C:\Users\Matteo\Documents\Projects\Mods\TransferChestForge-1.16\src\generated\resources --existing C:\Users\Matteo\Documents\Projects\Mods\TransferChestForge-1.16\src\main\resources"/>
     <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$\run"/>
     <module name="TransferChestForge-1.16.main"/>
     <envs>

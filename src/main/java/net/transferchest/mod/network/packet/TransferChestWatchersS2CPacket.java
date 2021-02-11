@@ -30,28 +30,31 @@ public class TransferChestWatchersS2CPacket
         this.namesLength = names.length;
     }
     
-    
     public void sendTo(PlayerEntity player)
     {
         PacketBuffer buf = new PacketBuffer(Unpooled.buffer());
         write(buf);
         TCNetwork.channel.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player), this);
-        //ServerPlayNetworking.send((ServerPlayerEntity) player, PACKET_ID, buf);
-        //ServerSidePacketRegistry.INSTANCE.sendToPlayer(player, PACKET_ID, buf);
     }
     
     public boolean handle(Supplier<NetworkEvent.Context> ctx)
     {
         ctx.get().enqueueWork(() ->
         {
+            //System.out.println("Packet names: " + names.toString());
             ClientPlayerEntity player = Minecraft.getInstance().player;
             Container handler = player.openContainer;
             if(handler != null)
             {
                 if(handler instanceof TransferChestContainer)
                 {
+                    System.out.println("Instance");
                     TransferChestContainer tcHandler = (TransferChestContainer) handler;
-                    //tcHandler.updatePanelEntries(names);
+                    tcHandler.updateWatchers(names);
+                }
+                else
+                {
+                    System.out.println("Not instance");
                 }
             }
         });
@@ -68,14 +71,13 @@ public class TransferChestWatchersS2CPacket
         }
     }
     
-    public TransferChestWatchersS2CPacket read(PacketBuffer buf)
+    public void read(PacketBuffer buf)
     {
-        int length = buf.readInt();
-        String[] names = new String[length];
-        for(int i = 0; i < length; i++)
+        namesLength = buf.readInt();
+        names = new String[namesLength];
+        for(int i = 0; i < namesLength; i++)
         {
             names[i] = buf.readString();
         }
-        return new TransferChestWatchersS2CPacket(names);
     }
 }

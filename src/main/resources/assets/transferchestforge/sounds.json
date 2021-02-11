@@ -1,0 +1,12 @@
+{
+    "transfer_chest_open": {
+        "sounds": [
+            "transferchestforge:transfer_chest_open"
+        ]
+    },
+    "transfer_chest_close": {
+        "sounds": [
+            "transferchestforge:transfer_chest_close"
+        ]
+    }
+}

@@ -17,11 +17,14 @@ import net.transferchest.mod.network.packet.TransferChestWatchersS2CPacket;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+//What i could do is share the inventory items, that is, when the inventory is retrieved, the items it actually modifies are the same.
+//Therefore, i have a single list of items that gets modified by the tile entity interface. Whenever a new tile entity opens the gui, the
+//items are passed and so they both modify the same inventory
 
 @Mod(TCLoader.MOD_ID)
 public class TCLoader
 {
-    private static final Logger LOGGER = LogManager.getLogger();
+    public static final Logger LOGGER = LogManager.getLogger();
     public static final String MOD_ID = "transferchestforge";
     
     public TCLoader()
@@ -33,7 +36,8 @@ public class TCLoader
         TCItems.initialize();
         TCEntities.initialize();
         TCContainers.initialize();
-    
+        TCSounds.initialize();
+        
         MinecraftForge.EVENT_BUS.addListener(this::onStart);
         MinecraftForge.EVENT_BUS.addListener(this::onStop);
         MinecraftForge.EVENT_BUS.register(this);

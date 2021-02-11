@@ -15,9 +15,9 @@ displayName = "Transfer Chest" #mandatory
 
 #displayURL="https://change.me.to.your.mods.homepage.example.invalid/" #optional
 
-logoFile = "transferchestforge.png" #optional
+logoFile = "icon.png" #optional
 
-credits = "Thanks for this mod goes to t_r_a_t" #optional
+credits = "Thanks for this mod goes to the Forge community that helped porting this mod from Fabric!" #optional
 
 authors = "t_r_a_t" #optional
 

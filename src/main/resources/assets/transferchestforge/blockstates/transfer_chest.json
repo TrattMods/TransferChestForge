@@ -1,5 +1,12 @@
 {
     "variants": {
-        "": {"model": "transferchestforge:block/transfer_chest_closed"}
+        "facing=north,opened=false": {"model": "transferchestforge:block/transfer_chest_closed"},
+        "facing=east,opened=false": {"model": "transferchestforge:block/transfer_chest_closed", "y": 90},
+        "facing=south,opened=false": {"model": "transferchestforge:block/transfer_chest_closed", "y": 180},
+        "facing=west,opened=false": {"model": "transferchestforge:block/transfer_chest_closed", "y": 270},
+        "facing=north,opened=true": {"model": "transferchestforge:block/transfer_chest_opened"},
+        "facing=east,opened=true": {"model": "transferchestforge:block/transfer_chest_opened", "y": 90},
+        "facing=south,opened=true": {"model": "transferchestforge:block/transfer_chest_opened", "y": 180},
+        "facing=west,opened=true": {"model": "transferchestforge:block/transfer_chest_opened", "y": 270}
     }
 }

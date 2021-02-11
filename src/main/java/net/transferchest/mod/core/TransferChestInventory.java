@@ -1,34 +1,39 @@
 package net.transferchest.mod.core;
 
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraftforge.items.ItemStackHandler;
+import net.transferchest.mod.initializer.TCItems;
 
-public class TransferChestInventory
+import javax.annotation.Nonnull;
+
+public class TransferChestInventory extends ItemStackHandler
 {
     public static final int INVENTORY_SIZE = 10;
-    protected final ItemStackHandler content;
     
     public TransferChestInventory()
     {
-        content = new ItemStackHandler(INVENTORY_SIZE);
-    }
-    
-    public ItemStackHandler getContent()
-    {
-        return content;
+        super(INVENTORY_SIZE);
     }
     
     @Override
     public String toString()
     {
         String ret = "Inventory: ";
-        //for(int i = 0; i < getSizeInventory(); i++)
-        //{
-        //    ret += getStackInSlot(i).toString();
-        //    if(i < getSizeInventory() - 1)
-        //    {
-        //        ret += ", ";
-        //    }
-        //}
+        for(int i = 0; i < getSlots(); i++)
+        {
+            ret += getStackInSlot(i).toString();
+            if(i < getSlots() - 1)
+            {
+                ret += ", ";
+            }
+        }
         return ret;
     }
+    
+    @Override public boolean isItemValid(int slot, @Nonnull ItemStack stack)
+    {
+        return !stack.getItem().equals(TCItems.TRANSFER_CHEST_ITEM) && !stack.equals(Items.SHULKER_BOX) && !stack.equals(Items.ENDER_CHEST);
+    }
+    
 }

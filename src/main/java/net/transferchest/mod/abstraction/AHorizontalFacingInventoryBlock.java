@@ -7,12 +7,10 @@ import net.minecraft.block.HorizontalBlock;
 import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.state.DirectionProperty;
 import net.minecraft.state.StateContainer;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Mirror;
 import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IBlockReader;
 import net.minecraft.world.IWorld;
 
 import javax.annotation.Nullable;
@@ -32,8 +30,6 @@ public abstract class AHorizontalFacingInventoryBlock extends AInventoryBlock
         super(settings);
         this.setDefaultState((BlockState) ((BlockState) this.getDefaultState()).with(FACING, Direction.NORTH));
     }
-    
-    @Nullable @Override public abstract TileEntity createNewTileEntity(IBlockReader worldIn);
     
     @Override protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder)
     {

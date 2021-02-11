@@ -3,7 +3,6 @@ package net.transferchest.mod.core;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
-import net.transferchest.mod.api.ModLogger;
 import net.transferchest.mod.gui.TransferChestContainer;
 import net.transferchest.mod.loader.TCLoader;
 import net.transferchest.mod.network.NetworkHandler;
@@ -47,10 +46,12 @@ public final class TransferChestHandler
     
     private static void notifyClients(World world)
     {
+        
         String[] names = new String[openGUIs.size()];
         for(int i = 0; i < openGUIs.size(); i++)
         {
             names[i] = openGUIs.get(i).getOwnerName();
+            System.out.println(names[i]);
         }
         NetworkHandler.sendToAll(new TransferChestWatchersS2CPacket(names), world.getServer().getPlayerList());
     }
@@ -58,7 +59,7 @@ public final class TransferChestHandler
     
     public static void printStatus()
     {
-        new ModLogger(TCLoader.MOD_ID).logInfo(inventory.toString());
+        TCLoader.LOGGER.info(inventory.toString());
     }
     
     public static void buildInventory(SerializableInventory serializableInventory)
@@ -67,7 +68,7 @@ public final class TransferChestHandler
         for(int i = 0; i < length; i++)
         {
             ItemStackWrapper current = serializableInventory.getInventory()[i];
-            inventory.getContent().setStackInSlot(i, new ItemStack(Item.getItemById(current.getID()), current.getCount()));
+            inventory.setStackInSlot(i, new ItemStack(Item.getItemById(current.getID()), current.getCount()));
         }
     }
 }
