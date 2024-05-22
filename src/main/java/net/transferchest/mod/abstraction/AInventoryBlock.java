@@ -1,34 +1,20 @@
 package net.transferchest.mod.abstraction;
 
-import net.minecraft.block.AbstractBlock;
-import net.minecraft.block.BlockRenderType;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.ContainerBlock;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
 
-public abstract class AInventoryBlock extends ContainerBlock
-{
-    public AInventoryBlock(AbstractBlock.Properties settings)
-    {
+import net.minecraft.world.level.block.BaseEntityBlock;
+import net.minecraft.world.level.block.RenderShape;
+import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.block.state.BlockState;
+
+public abstract class AInventoryBlock extends BaseEntityBlock {
+    public AInventoryBlock(BlockBehaviour.Properties settings) {
         super(settings);
     }
-    
+
+
     @Override
-    public boolean hasComparatorInputOverride(BlockState state)
-    {
-        return false;
-    }
-    
-    @Override
-    public int getComparatorInputOverride(BlockState blockState, World worldIn, BlockPos pos)
-    {
-        return 0;
-    }
-    
-    
-    public BlockRenderType getRenderType(BlockState state)
-    {
-        return BlockRenderType.MODEL;
+    public RenderShape getRenderShape(BlockState p_49232_) {
+        return RenderShape.MODEL;
+        //return super.getRenderShape(p_49232_);
     }
 }
